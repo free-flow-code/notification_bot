@@ -1,6 +1,7 @@
 import time
 import requests
 import telegram
+import textwrap as tw
 from environs import Env
 
 
@@ -42,12 +43,17 @@ def main():
 
     for message in server_response:
         if message['new_attempts'][0]['is_negative']:
-            text = f'Работа {message["new_attempts"][0]["lesson_title"]} вернулась с проверки\n\n'\
-                   f'К сожалению в ней нашлись ошибки.\n{message["new_attempts"][0]["lesson_url"]}.'
+            text = f'''\
+            Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
+            К сожалению в ней нашлись ошибки.
+            Ссылка: {message["new_attempts"][0]["lesson_url"]}.
+            '''
         else:
-            text = f'Работа {message["new_attempts"][0]["lesson_title"]} вернулась с проверки\n\n' \
-                   f'Преподавателю все понравилось, можно приступать к следующему уроку!'
-        bot.send_message(text=text, chat_id=user_id)
+            text = f'''\
+            Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
+            Преподавателю все понравилось, можно приступать к следующему уроку!
+            '''
+        bot.send_message(text=tw.dedent(text), chat_id=user_id)
 
 
 if __name__ == '__main__':
