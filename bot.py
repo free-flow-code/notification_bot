@@ -21,8 +21,7 @@ def listen_devman_server(token):
                 yield message
         except requests.exceptions.ReadTimeout:
             continue
-        except requests.exceptions.ConnectionError as err:
-            print(err)
+        except requests.exceptions.ConnectionError:
             if not try_connection:
                 time.sleep(3)
             else:
