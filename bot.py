@@ -39,9 +39,9 @@ def main():
     devman_token = env.str('DEVMAN_TOKEN')
 
     bot = telegram.Bot(token=tg_token)
-    response = listen_devman_server(devman_token)
+    server_response = listen_devman_server(devman_token)
 
-    for message in response:
+    for message in server_response:
         if message['new_attempts'][0]['is_negative']:
             text = f'Работа {message["new_attempts"][0]["lesson_title"]} вернулась с проверки\n\n'\
                    f'К сожалению в ней нашлись ошибки.\n{message["new_attempts"][0]["lesson_url"]}.'
