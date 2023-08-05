@@ -39,9 +39,9 @@ def main():
     devman_token = env.str('DEVMAN_TOKEN')
 
     bot = telegram.Bot(token=tg_token)
-    server_response = listen_devman_server(devman_token)
+    review_message = listen_devman_server(devman_token)
 
-    for message in server_response:
+    for message in review_message:
         if message['new_attempts'][0]['is_negative']:
             text = f'''\
             Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
