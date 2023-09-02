@@ -5,6 +5,19 @@ import textwrap as tw
 from environs import Env
 import logging
 
+logger = logging.getLogger(__file__)
+
+
+class TelegramLogsHandler(logging.Handler):
+    def __init__(self, bot, user_id):
+        super().__init__()
+        self.bot = bot
+        self.user_id = user_id
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.bot.send_message(text=log_entry, chat_id=self.user_id)
+
 
 def listen_devman_server(token):
     url = 'https://dvmn.org/api/long_polling/'
@@ -33,14 +46,16 @@ def listen_devman_server(token):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
     env = Env()
     env.read_env()
-    user_id = env.str('TG_USER_ID')
     tg_token = env.str('TG_TOKEN')
+    user_id = env.str('TG_USER_ID')
     devman_token = env.str('DEVMAN_TOKEN')
 
     bot = telegram.Bot(token=tg_token)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(TelegramLogsHandler(bot, user_id))
+    logging.info('Бот запущен')
     review_message = listen_devman_server(devman_token)
 
     for message in review_message:
