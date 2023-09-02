@@ -56,25 +56,26 @@ def main():
     logger.setLevel(logging.DEBUG)
     logger.addHandler(TelegramLogsHandler(bot, user_id))
     logging.info('Бот запущен')
-    review_message = listen_devman_server(devman_token)
 
-    for message in review_message:
-        if message['new_attempts'][0]['is_negative']:
-            text = f'''\
-            Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
-            К сожалению в ней нашлись ошибки.
-            Ссылка: {message["new_attempts"][0]["lesson_url"]}.
-            '''
-        else:
-            text = f'''\
-            Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
-            Преподавателю все понравилось, можно приступать к следующему уроку!
-            '''
-        bot.send_message(text=tw.dedent(text), chat_id=user_id)
+    while True:
+        try:
+            review_message = listen_devman_server(devman_token)
+            for message in review_message:
+                if message['new_attempts'][0]['is_negative']:
+                    text = f'''\
+                    Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
+                    К сожалению в ней нашлись ошибки.
+                    Ссылка: {message["new_attempts"][0]["lesson_url"]}.
+                    '''
+                else:
+                    text = f'''\
+                    Работа "{message["new_attempts"][0]["lesson_title"]}" вернулась с проверки.
+                    Преподавателю все понравилось, можно приступать к следующему уроку!
+                    '''
+                bot.send_message(text=tw.dedent(text), chat_id=user_id)
+        except Exception as err:
+            logger.exception(err)
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except Exception as err:
-        logging.exception(err)
+    main()
