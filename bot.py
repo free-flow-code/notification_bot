@@ -3,6 +3,7 @@ import requests
 import telegram
 import textwrap as tw
 from environs import Env
+import logging
 
 
 def listen_devman_server(token):
@@ -32,6 +33,7 @@ def listen_devman_server(token):
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     env = Env()
     env.read_env()
     user_id = env.str('TG_USER_ID')
@@ -57,4 +59,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as err:
+        logging.exception(err)
